@@ -16,13 +16,21 @@ const start = async () => {
 
     do {
         const result = await file1Data.read(buffer, 0, chunkSize, position);
-        const cipheredBuffer = Buffer.from(buffer.map((buffByte, i) => buffByte ^ key[i]));
+
+        for (let i = 0; i < buffer.length; i++) {
+            if (buffer[i] >= 97 && buffer[i] <= 122) {
+                buffer[i] -= 32;
+            }
+        }
+        
+        // const cipheredBuffer = Buffer.from(buffer.map((buffByte, i) => buffByte ^ key[i]));
         bytesRead = result.bytesRead;
 
         console.log(bufferToBinary(buffer));
         console.log(buffer.toString('utf8'));
 
-        await file2Data.write(cipheredBuffer, 0, bytesRead);
+        // await file2Data.write(cipheredBuffer, 0, bytesRead);
+        await file2Data.write(buffer, 0, bytesRead);
 
         position += chunkSize;
     } while (bytesRead > 0)
