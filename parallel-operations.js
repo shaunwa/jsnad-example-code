@@ -32,21 +32,27 @@ function onBothFilesFinished(data1, data2) {
     console.log(data1 + ' ' + data2);
 
     // Delete both files
-    fs.unlink('some-text-file.txt', onFirstFileDeleted);
+    fs.unlink('some-text-file.txt', (err) => onFileDeleteCompleted(true));
+    fs.unlink('another-text-file.txt', (err) => onFileDeleteCompleted(undefined, true));
 }
 
-function onFirstFileDeleted(err1) {
-    fs.unlink('another-text-file.txt', (err2) => onSecondFileDeleted(err1, err2));
+let firstFileDeleted = false;
+let secondFileDeleted = false;
+
+function onFileDeleteCompleted(first, second) {
+    if (first != null) {
+        firstFileDeleted = first;
+    }
+
+    if (second != null) {
+        secondFileDeleted = second;
+    }
+
+    if (firstFileDeleted && secondFileDeleted) {
+        onFilesDeleted();
+    }
 }
 
-function onSecondFileDeleted(err1, err2) {
-    if (err1) {
-        console.log('Unable to delete some-text-file.txt');
-    }
-
-    if (err2) {
-        console.log('Unable to delete another-text-file.txt');
-    }
-
+function onFilesDeleted() {
     console.log('Done!');
 }
