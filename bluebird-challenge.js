@@ -1,3 +1,9 @@
+const Bluebird = require('bluebird');
+
+Bluebird.config({
+    cancellation: true,
+});
+
 function delay(ms, resolveOrReject, valueOrReason) {
     return new Bluebird((resolve, reject, onCancel) => {
         const timeout = setTimeout(() => {
@@ -17,12 +23,34 @@ function delay(ms, resolveOrReject, valueOrReason) {
 }
 
 function bluebirdRace(promises) {
+    return new Bluebird((resolve, reject, onCancel) => {
+        function cancelOthers(promise) {
+            promises.forEach(p => {
+                if (p !== promise) {
+                    p.cancel();
+                }
+            });
+        }
 
+        promises.forEach(promise => {
+            promise.then(result => {
+                resolve(result);
+                cancelOthers(promise);
+            })
+            .catch(err => {
+                reject(err);
+                cancelOthers(promise);
+            });
+        });
+
+        onCancel(() => {
+            promises.forEach(p => p.cancel());
+        });
+    });
 }
 
 bluebirdRace([
-    delay(2000, 'resolve', '2000ms'),
-    delay(3000, 'resolve', '3000ms'),
-    delay(6000, 'resolve', '6000ms'),
-])
-.then(result => console.log(result));
+    delay(2000, 'reject', '2000ms'),
+    delay(3000, 'reject', '3000ms'),
+    delay(6000, 'reject', '6000ms'),
+]).cancel();
