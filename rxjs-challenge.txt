@@ -1,0 +1,8 @@
+Hello
+everybody
+I
+hope
+you
+are
+enjoying
+RxJS
