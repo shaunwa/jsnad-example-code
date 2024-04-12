@@ -1,12 +1,16 @@
 const { exec, execFile } = require('node:child_process');
 
-const numbers = [1, 2, 3, 4, 5, 6, 7, 'rm -rf'];
+const numbers = [1, 2, 3, 4, 5, 6, 7];
 
 // exec('node sum.js ' + numbers.join(' '), (err, stdout, stderr) => {
 //     console.log(Number(stdout));
 // });
 
-execFile('node', ['sum.js', ...numbers], (err, stdout, stderr) => {
+execFile('python3', ['sum.py', ...numbers], (err, stdout, stderr) => {
+    if (err) {
+        console.error(err);
+        return;
+    }
     console.log(Number(stdout));
 });
 
