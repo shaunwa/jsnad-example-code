@@ -4,10 +4,6 @@ const client = new WebSocket('ws://localhost:8000');
 
 client.on('open', () => {
     console.log('Established a socket connection with the server!');
-
-    setTimeout(() => {
-        client.send('OTHERS - Hello everyone!');
-    }, 2000);
 });
 
 client.on('message', data => {
