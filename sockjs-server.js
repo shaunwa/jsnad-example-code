@@ -8,15 +8,25 @@ const server = http.createServer((req, res) => {
 
 const sockjsServer = sockjs.createServer();
 
+let openConnections = [];
+
+function broadcast(message) {
+    openConnections.forEach(conn => {
+        conn.write(message);
+    });
+}
+
 sockjsServer.on('connection', conn => {
     console.log('Received a new connection!');
+    openConnections.push(conn);
 
     setTimeout(() => {
-        conn.write('Hello from SockJS!');
-    }, 2000);
+        broadcast('Hello from SockJS!');
+    }, 10000);
 
     conn.on('close', () => {
         console.log('Client disconnected!');
+        openConnections = openConnections.filter(c => c !== conn);
     });
 });
 
