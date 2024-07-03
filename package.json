@@ -18,5 +18,9 @@
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1",
     "ws": "^8.17.1"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.6.0"
   }
 }
